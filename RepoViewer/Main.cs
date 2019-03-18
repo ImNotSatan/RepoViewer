@@ -20,7 +20,7 @@ namespace RepoViewer
         string uniqueid = "8843d7f92416211de9ebb963ff4ce27125932878";
         string firmware = "12.1.2";
         string machine = "iPhone10,6";
-        string agent = "Telesphoreo APT-HTTP/1.0.592";
+        string agent = "Cydia/0.9 CFNetwork/976 Darwin/18.2.0";
 
         internal class PKG
         {
