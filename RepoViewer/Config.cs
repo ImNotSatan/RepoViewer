@@ -27,7 +27,7 @@ namespace RepoViewer
 
         public void reset_headers()
         {
-            richTextBox1.Text = "X-Machine=iPhone10,6\r\nX-Unique-ID=33bd4929abe57b93c51fe6bbe037d368858fafeb\r\nX-Firmware=12.1.2\r\nUser-Agent=Telesphoreo APT-HTTP/1.0.592";
+            richTextBox1.Text = "X-Machine=iPhone10,6\r\nX-Unique-ID=8843d7f92416211de9ebb963ff4ce27125932878\r\nX-Firmware=12.1.2\r\nUser-Agent=Telesphoreo APT-HTTP/1.0.592";
             if (File.Exists("headers.cfg"))
             {
                 File.Delete("headers.cfg");
