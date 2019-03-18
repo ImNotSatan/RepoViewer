@@ -69,6 +69,10 @@ namespace RepoViewer
 
         private void Main_Load(object sender, EventArgs e)
         {
+            test.Headers["Accept-Language"] = "nl-nl";
+            test.Headers["Accept-Encoding"] = "gzip, deflate";
+            test.Headers["Accept"] = "*/*";
+            test.Headers["X-Original-Url"] = "Packages";
             test.Headers["X-Machine"] = machine;
             test.Headers["X-Unique-ID"] = uniqueid;
             test.Headers["X-Firmware"] = firmware;
