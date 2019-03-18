@@ -27,7 +27,7 @@ namespace RepoViewer
 
         public void reset_headers()
         {
-            string xtra = "Accept-Language=nl-nl\r\nAccept-Encoding=gzip, deflate\r\nAccept=*/*\r\nX-Original-Url=Packages\r\n";
+            string xtra = "Accept-Language=nl-nl\r\nAccept=*/*\r\nX-Original-Url=Packages\r\n";
             richTextBox1.Text = xtra + "X-Machine=iPhone10,6\r\nX-Unique-ID=8843d7f92416211de9ebb963ff4ce27125932878\r\nX-Firmware=12.1.2\r\nUser-Agent=Cydia/0.9 CFNetwork/976 Darwin/18.2.0";
             if (File.Exists("headers.cfg"))
             {
