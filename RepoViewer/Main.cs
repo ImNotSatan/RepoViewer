@@ -157,10 +157,17 @@ namespace RepoViewer
 
         public void clean_temp()
         {
-            DirectoryInfo projecten = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory + "\\temp");
-            foreach (var delfile in projecten.GetFiles("*"))
+            if (Directory.Exists(AppDomain.CurrentDomain.BaseDirectory + "\\temp"))
             {
-                File.Delete(delfile.FullName);
+                DirectoryInfo projecten = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory + "\\temp");
+                foreach (var delfile in projecten.GetFiles("*"))
+                {
+                    File.Delete(delfile.FullName);
+                }
+            }
+            else
+            {
+                Directory.CreateDirectory(AppDomain.CurrentDomain.BaseDirectory + "\\temp");
             }
         }
 
