@@ -85,9 +85,9 @@ namespace RepoViewer
             packages.BeginUpdate();
             foreach (PKG temp in toaddlist)
             {
-                    ListViewItem nieuw = new ListViewItem(temp.package);
-                    nieuw.SubItems.Add(temp.name);
+                    ListViewItem nieuw = new ListViewItem(temp.name);
                     nieuw.SubItems.Add(temp.version);
+                    nieuw.SubItems.Add(temp.package);
                     nieuw.Tag = temp.filename;
                     packages.Items.AddRange(new ListViewItem[] { nieuw });
                 //MessageBox.Show("Added: " + temp.package);
@@ -241,115 +241,130 @@ namespace RepoViewer
                 }
             }
         }
-
+        bool loading_done = false;
+        string loading_errors = "";
+        string loading_warnings = "";
+        int lval = 25;
         public void loadrepo()
         {
-            log("Loading repo: " + repo.Text + "(" + DateTime.Now + ")");
-            PKG temppkg = new PKG();
+            repo.Enabled = false;
+            packages.Enabled = false;
+            loading_done = false;
+            loading_errors = "";
+            loading_warnings = "";
+
             toaddlist = new List<PKG>();
-            string errors = "";
             packages.Items.Clear();
             packages_search.Items.Clear();
-            //packages.Columns.Clear();
-            //packages_search.Columns.Clear();
-            RichTextBox temp = new RichTextBox();
-            currentrepo = repo.Text;
-            //MessageBox.Show(test.DownloadString("https://whoer.net/"));
-            clean_temp();
-            if (currentrepo.ToLower().Contains("bigboss"))
-            {
-                //MessageBox.Show("Hotfixed thebigboss, press OK to start.");
-                if(downloadpackagefile("http://apt.thebigboss.org/repofiles/cydia/dists/stable/main/binary-iphoneos-arm/") == false)
-                {
-                    return;
-                }
-            }
-            else
-            {
-                if (downloadpackagefile(currentrepo) == false)
-                {
-                    return;
-                }
-            }
+            loading_monitor.Enabled = true;
 
-            foreach (string lijn in packagefile)
+            lval = 25;
+            loading.Value = 25;
+            loading.Visible = true;
+
+            new Task(() =>
             {
-                if (lijn == "")
+            log("Loading repo: " + repo.Text + "(" + DateTime.Now + ")");
+                PKG temppkg = new PKG();
+                //packages.Columns.Clear();
+                //packages_search.Columns.Clear();
+                RichTextBox temp = new RichTextBox();
+                currentrepo = repo.Text;
+                //MessageBox.Show(test.DownloadString("https://whoer.net/"));
+                clean_temp();
+                if (currentrepo.ToLower().Contains("bigboss"))
                 {
-                    //addpackage();
-                    //toadd = empty;
-                    //toaddcount = 0;
-                    if (temppkg.package != "" && temppkg.version != "" && temppkg.name != "" && temppkg.filename != "")
+                    //MessageBox.Show("Hotfixed thebigboss, press OK to start.");
+                    if (downloadpackagefile("http://apt.thebigboss.org/repofiles/cydia/dists/stable/main/binary-iphoneos-arm/") == false)
                     {
-                        // MessageBox.Show("Adding pkg:" + temppkg.Package);
-
-                        /*
-                            bool found = false;
-                            foreach(PKG tmpcheck in toaddlist)
-                            {
-                                if(tmpcheck.package == temppkg.package)
-                                {
-                                    tmpcheck.versions.Add(temppkg.version);
-                                    found = true;
-                                    break;
-                                }
-                            }
-                        if (found == false)
-                        {*/
-                            toaddlist.Add(temppkg);
-                        //}
+                        loading_errors = "Could not download Package file.";
+                        loading_done = true;
+                        return;
                     }
-                    temppkg = new PKG();
-                    //MessageBox.Show("Done");
-                    //return;
                 }
                 else
                 {
-                    //toaddcount++;
-                    try
+                    if (downloadpackagefile(currentrepo) == false)
                     {
-                        if (lijn.Replace(": ", ":").Split(':')[0].ToLower() == "package")
-                        {
-                            temppkg.package = lijn.Replace(": ", ":").Split(':')[1];
-                        }
-                        else if (lijn.Replace(": ", ":").Split(':')[0].ToLower() == "version")
-                        {
-                            temppkg.version = lijn.Replace(": ", ":").Split(':')[1];
-                        }
-                        else if (lijn.Replace(": ", ":").Split(':')[0].ToLower() == "name")
-                        {
-                            temppkg.name = lijn.Replace(": ", ":").Split(':')[1];
-                        }
-                        else if (lijn.Replace(": ", ":").Split(':')[0].ToLower() == "filename")
-                        {
-                            temppkg.filename = lijn.Replace(": ", ":").Split(':')[1];
-                        }
+                        loading_errors = "Could not download Package file.";
+                        loading_done = true;
+                        return;
                     }
-                    catch(Exception)
-                    {
-                        errors += "[Failed parsing] : " + lijn + "\r\nSkipped\r\n";
-                    }
-                    //MessageBox.Show("Found line");
                 }
-            }
-            //Hotfix/
-            if (temppkg.package != "" && temppkg.version != "" && temppkg.name != "" && temppkg.filename != "")
-            {
-                // MessageBox.Show("Adding pkg:" + temppkg.Package);
-                toaddlist.Add(temppkg);
-            }
-            if (currentrepo.ToLower().Contains("bigboss"))
-            {
-                currentrepo = "http://apt.thebigboss.org/repofiles/cydia/";
-            }
-            addpackage();
-            label1.Text = packages.Items.Count + "\r\ndebs";
-            zoek("");
-            if (errors != "")
-            {
-                MessageBox.Show(errors);
-            }
-            log("Completed loading: " + repo.Text + " - found " + packages.Items.Count + " debs" + "(" + DateTime.Now + ")");
+                lval = 70;
+                foreach (string lijn in packagefile)
+                {
+                    if (lijn == "")
+                    {
+                        //addpackage();
+                        //toadd = empty;
+                        //toaddcount = 0;
+                        if (temppkg.package != "" && temppkg.version != "" && temppkg.name != "" && temppkg.filename != "")
+                        {
+                            // MessageBox.Show("Adding pkg:" + temppkg.Package);
+
+                            /*
+                                bool found = false;
+                                foreach(PKG tmpcheck in toaddlist)
+                                {
+                                    if(tmpcheck.package == temppkg.package)
+                                    {
+                                        tmpcheck.versions.Add(temppkg.version);
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                            if (found == false)
+                            {*/
+                            toaddlist.Add(temppkg);
+                            //}
+                        }
+                        temppkg = new PKG();
+                        //MessageBox.Show("Done");
+                        //return;
+                    }
+                    else
+                    {
+                        //toaddcount++;
+                        try
+                        {
+                            if (lijn.Replace(": ", ":").Split(':')[0].ToLower() == "package")
+                            {
+                                temppkg.package = lijn.Replace(": ", ":").Split(':')[1];
+                            }
+                            else if (lijn.Replace(": ", ":").Split(':')[0].ToLower() == "version")
+                            {
+                                temppkg.version = lijn.Replace(": ", ":").Split(':')[1];
+                            }
+                            else if (lijn.Replace(": ", ":").Split(':')[0].ToLower() == "name")
+                            {
+                                temppkg.name = lijn.Replace(": ", ":").Split(':')[1];
+                            }
+                            else if (lijn.Replace(": ", ":").Split(':')[0].ToLower() == "filename")
+                            {
+                                temppkg.filename = lijn.Replace(": ", ":").Split(':')[1];
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            loading_warnings += "[Failed parsing] : " + lijn + "\r\nSkipped\r\n";
+                        }
+                        //MessageBox.Show("Found line");
+                    }
+                }
+                //Hotfix/
+                lval = 90;
+                if (temppkg.package != "" && temppkg.version != "" && temppkg.name != "" && temppkg.filename != "")
+                {
+                    // MessageBox.Show("Adding pkg:" + temppkg.Package);
+                    toaddlist.Add(temppkg);
+                }
+                if (currentrepo.ToLower().Contains("bigboss"))
+                {
+                    currentrepo = "http://apt.thebigboss.org/repofiles/cydia/";
+                }
+                loading_done = true;
+            }).Start();
         }
         private void repo_KeyDown(object sender, KeyEventArgs e)
         {
@@ -367,12 +382,12 @@ namespace RepoViewer
 
         public void log(string logtext)
         {
-            /*
+            
             using (StreamWriter w = File.AppendText("log.txt"))
             {
                 w.WriteLine(logtext);
             }
-            */
+            
         }
 
         public void downloaddebs(bool overwrite)
@@ -559,6 +574,38 @@ namespace RepoViewer
         {
             Form Config = new Config(this);
             Config.ShowDialog();
+        }
+
+        private void done_Tick(object sender, EventArgs e)
+        {
+            if(lval > 25 && loading.Value != lval)
+            {
+                loading.Value = lval;
+            }
+            if (loading_done)
+            {
+                loading_monitor.Enabled = false;
+                if (loading_errors == "")
+                {
+                    addpackage();
+                    label1.Text = packages.Items.Count + "\r\ndebs";
+                    zoek("");
+                }
+                log("Completed loading: " + repo.Text + " - found " + packages.Items.Count + " debs" + "(" + DateTime.Now + ")");
+                repo.Enabled = true;
+                packages.Enabled = true;
+                loading.Visible = false;
+                if(loading_warnings != "")
+                {
+                    log("On the above project the followings warnings where found: " + loading_warnings);
+                    MessageBox.Show(loading_warnings);
+                }
+            }
+        }
+
+        private void github_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://github.com/ImNotSatan/RepoViewer");
         }
     }
 }
