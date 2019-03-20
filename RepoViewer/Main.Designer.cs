@@ -250,7 +250,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Main";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Repo Viewer v1.5";
+            this.Text = "Repo Viewer v1.6";
             this.Load += new System.EventHandler(this.Main_Load);
             this.rcm.ResumeLayout(false);
             this.ResumeLayout(false);
