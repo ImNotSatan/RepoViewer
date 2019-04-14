@@ -67,6 +67,8 @@ namespace RepoViewer
             }
         }
 
+
+
         private void Main_Load(object sender, EventArgs e)
         {
             test.Headers["Accept-Language"] = "nl-nl";
@@ -234,7 +236,14 @@ namespace RepoViewer
                         }
                         catch (Exception)
                         {
-                            MessageBox.Show("Failed getting packages :(");
+                            if (repo.Contains("https"))
+                            {
+                                MessageBox.Show("Failed to connect using HTTPS, click OK to retry with HTTP");
+                            }
+                            else
+                            {
+                                MessageBox.Show("Failed getting packages :(");
+                            }
                             return false;
                         }
                     }
